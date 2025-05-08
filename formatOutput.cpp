@@ -4,6 +4,8 @@
 #include <sstream>
 #include <fstream>
 
+#include "Estimate.cpp"
+
 using namespace std;
 
 string materialArray[500];
@@ -34,6 +36,12 @@ void print(int currentIndex) {
 }
 
 int main() {
+    //TESTING FOR ESTIMATE CLASS - REMOVE LATER
+    Estimate Z = Estimate();
+    Z.addUnit("a", 1, 1);
+    Z.addUnit("b", 1, 2);
+    cout << Z.getEstimate();
+
     string formattedString = "";
     string material;
     int quantity;
