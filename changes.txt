@@ -1,0 +1,15 @@
+5/8/2025 Changes:
+
+Unit Class Changes:
+    -Changed {return cost} to {return (cost * quantity)}
+    -Added get() for each of the attributes of the Unit Class
+
+Estimate Class Changes:
+    -Changed .addUnit() parameters to accept a Unit Instance
+    -Changed to add Unit Instance straight to the units list
+    -Added .getUnits(int) to return each instance of Unit stored in units list
+
+Main Changes:
+    -Added makeUnit(string, int, float) to create Unit Instances and send them to the Estimate Instance
+    -Changed Output functions to use Class Variables
+    -Added some comments throughout 
