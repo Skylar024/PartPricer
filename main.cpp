@@ -13,11 +13,30 @@ int quantityArray[500];
 double costArray[500];
 Estimate Z = Estimate();
 
+// Helper function for comma formatting
+string formatWithCommas(int number) {
+    string s = to_string(number);
+    int len = s.length();
+    string result;
+    
+    for(int i = len-1; i >= 0; i--) {
+        result += s[i];
+        if((len - i) % 3 == 0 && i != 0) {
+            result += ',';
+        }
+    }
+    
+    string final;
+    for(int i = result.length()-1; i >= 0; i--) {
+        final += result[i];
+    }
+    return final;
+}
 
 string format(string material, int quantity, double costPerUnit) {
     ostringstream formattedString;
     formattedString << left << setw(20) << material 
-                    << left << setw(15) << to_string(quantity) + " Units"
+                    << left << setw(15) << formatWithCommas(quantity) + " Units"
                     << left << fixed << setprecision(2) << "$" << setw(19) << costPerUnit
                     << left << fixed << setprecision(2) << "$" << setw(15) << costPerUnit * quantity
                     << endl;
@@ -42,8 +61,6 @@ void makeUnit(string material, int quantity, float costPerUnit) {
     U.setUnit(material, quantity, costPerUnit);
     Z.addUnit(U);
 }
-
-
 
 int main() {
     string formattedString = "";
@@ -73,14 +90,52 @@ int main() {
         }
         
         switch (choice) {
-            case 1: //Option 1: Add New Material
+            case 1: {  //Option 1: Add New Material
                 cout << "Enter Material: ";
                 cin.ignore(); //Ignores any leftover newline from previous inputs
                 getline(cin, material); //Allows multi-word inputs
-                cout << "Enter Quantity of " << material << ": ";
-                cin >> quantity;
+
+                bool valid = false;
+                while (!valid) {
+                    cout << "Enter Quantity of " << material << ": ";
+                    string qtyStr;
+                    getline(cin, qtyStr);
+
+                    // Simple whitespace trim
+                    size_t start = 0, end = qtyStr.length()-1;
+                    while (start <= end && qtyStr[start] == ' ') start++;
+                    while (end >= start && qtyStr[end] == ' ') end--;
+                    qtyStr = qtyStr.substr(start, end-start+1);
+
+                    // Basic digit check
+                    bool isNumber = !qtyStr.empty();
+                    for(char c : qtyStr) {
+                        if(c < '0' || c > '9') {
+                            isNumber = false;
+                            break;
+                        }
+                    }
+
+                    if (!isNumber) {
+                        cout << "Invalid input. Quantity must be a positive whole number." << endl;
+                        continue;
+                    }
+
+                    try {
+                        quantity = stoi(qtyStr);
+                        valid = true;
+                    } catch (...) {
+                        cout << "Number too large or invalid. Please try again." << endl;
+                    }
+                }
+
                 cout << "Enter the Cost Per Unit of " << material << ": ";
-                cin >> costPerUnit;
+                while (!(cin >> costPerUnit)) {
+                    cin.clear();
+                    cin.ignore(1000, '\n');
+                    cout << "Invalid input. Please enter a numeric value: ";
+                }
+
                 materialArray[currentIndex] = material;
                 quantityArray[currentIndex] = quantity;
                 costArray[currentIndex] = costPerUnit;
@@ -89,11 +144,14 @@ int main() {
 
                 currentIndex++;
 
+                cout << endl;
                 cout << "------------------" << endl;
                 cout << "Information Saved!" << endl;
-                cout << "------------------" << endl << endl << endl;
+                cout << "------------------" << endl;
                 break;
+            }
             case 2: //Option 2: View Current Materials List
+                cout << endl;
                 cout << left << setw(20) << "Material" << left << setw(15) << "Quantity" << left << setw(20) << "Cost Per Unit" << left << setw(15) << "Materials Cost" << endl;
                 cout << "=========================================================================" << endl;
                 print(currentIndex);
@@ -126,8 +184,8 @@ int main() {
                     }
                     
                     //Total Cost Section                                   
-                    outFile << endl << endl << endl << left << setw(55) << "Total Material Types..................................." << NumOfMaterialsTypes << " Material Types" << endl;
-                    outFile << left << setw(55) << "Total Number of Units.................................." << totalMaterialsUnits << " Total Units" << endl;
+                    outFile << endl << endl << endl << left << setw(55) << "Total Material Types..................................." << NumOfMaterialsTypes << " Material Type(s)" << endl;
+                    outFile << left << setw(55) << "Total Number of Units.................................." << formatWithCommas(totalMaterialsUnits) << " Total Unit(s)" << endl;  // Added comma formatting
                     outFile << left << setw(55) << fixed << setprecision(2) << "Estimated Total Cost..................................." << "$" << totalCost;
 
                     //Footer Section
@@ -164,23 +222,5 @@ int main() {
                 break;
         }
     }    
-        
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
     return 0;
 }
