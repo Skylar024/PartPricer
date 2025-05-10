@@ -8,6 +8,7 @@
 
 using namespace std;
 
+//Variable Initalizations
 string materialArray[500];
 int quantityArray[500];
 double costArray[500];
@@ -63,6 +64,7 @@ void makeUnit(string material, int quantity, float costPerUnit) {
 }
 
 int main() {
+    //More Variable Initalizations
     string formattedString = "";
     string material;
     int quantity;
@@ -139,7 +141,8 @@ int main() {
                 materialArray[currentIndex] = material;
                 quantityArray[currentIndex] = quantity;
                 costArray[currentIndex] = costPerUnit;
-
+                
+                //Create Unit Class Instance
                 makeUnit(material, quantity, costPerUnit);
 
                 currentIndex++;
